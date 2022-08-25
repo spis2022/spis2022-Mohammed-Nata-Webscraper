@@ -12,6 +12,8 @@ Flask = "^2.2.0"
 dictionary = "^1.0"
 requests = "^2.28.1"
 bs4 = "^0.0.1"
+GitHub-Flask = "^3.2.0"
+Flask-Session = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"

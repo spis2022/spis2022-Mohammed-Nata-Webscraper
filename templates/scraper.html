@@ -1,35 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}Scraper{% endblock %}
+{% block content %}
+<p>scrapes</p>
 {% for link in links.keys() %}
-<p><a href={{ link }}>{{ link }}</a></p>
-<hr class="mt-5">
-
-<hr class="mb-5" />
-<!--Grid row-->
-<div class="row">
-
-  <!--Grid column-->
-  {% set index = 0 %}
-  {% set i = 0 %}
-	{% set totalImages = links[link]['images'] | length %}
-  {% fullColumn = totalImages // 2 %}
-  {% halfColumn = totalImages % 2 %} 
-  {% if fullColumn > 0 %}
-  	<div class="col-lg-4 col-md-6 mb-4">
-    {% index = 2 %}
-    {% if index > 0 %}
-      {% set image = links[link['images'][i] %}
-      <img src={{image}} class="img-fluid mb-4">
-      {% i = i + 1 %}
-      {% index = index - 1 %}
-    {% endif %}
-    {% fullColumn = fullColumn - 1 %}
-		</div>
-  {% endif %}
-	{% if halfColumn == 1 %}
-  	<img src={{image}} class="img-fluid mb-4">
-  	</div>
-	{% endif %}
-  <!--Grid column-->
-</div>
-<!--Grid row-->
-
+  <p><a href={{ link }}>{{ link }}</a></p>
+  <table>  
+  <tr> 
+  {% for image in links[link]['images'] %}
+    <td> <img src={{ image }} ></td>
+  {% endfor %}
+  </tr>
+  </table>
 {% endfor %}
+{% endblock %}
