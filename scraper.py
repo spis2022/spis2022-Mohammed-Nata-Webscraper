@@ -1,12 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
+import sqlite3
+
+#Data base
+# connection = sqlite3.connect("scraper.db")
+# cursor = connection.cursor()
 
 # Setting up soup for the general area search page
-def getLinks():
+def getLinks(location='sammamish-wa'):
   # soup for listing page
-  url = requests.get('https://garagesalefinder.com/yard-sales/sammamish-wa/')
-  soup = BeautifulSoup(url.text,'html.parser')
+  # change eventually
+  response = requests.get('https://garagesalefinder.com/yard-sales/' + location + "/")
+  soup = BeautifulSoup(response.text,'html.parser')
   # collects links of listings
   outerDict = {}  
   for aTag in soup.find_all('a', {'href': True}):
@@ -15,8 +21,13 @@ def getLinks():
       outerDict[link] = {}
   # building inner dictionary     
   for link in outerDict.keys():
-    urlDescription = requests.get(str(link))
-    soupD = BeautifulSoup(urlDescription.text, 'html.parser')
+    responseListing = requests.get(str(link))
+    soupD = BeautifulSoup(responseListing.text, 'html.parser')
+    outerDict[link]['location'] = location
+    outerDict[link]['title'] = getTitle(soupD)
+    outerDict[link]['description'] = getDescription(soupD)
+    outerDict[link]['address'] = getAddress(soupD)
+    outerDict[link]['dateAndTime'] = getDate(soupD)
     # Extracting the images and saving them to imageList
     # BELOW IS FOR IMAGES ONLY
     linkGallery = link + "/gallery"
@@ -28,37 +39,29 @@ def getLinks():
       outerDict[link]['images']=imageList
   return outerDict
 
-def getTitle():
-  url = requests.get("https://garagesalefinder.com/s/NUcGv/15326-corliss-pl-n-shoreline-wa-98133")
-  soup = BeautifulSoup(url.text, 'html.parser')
+def getTitle(soup):
   titleList = []
   for title in soup.find_all('h2'):
     titleList.append(title.text)
   title = titleList[0]
   return title
 
-def getAddress():
+def getAddress(soup):
   # find address here
-  url = requests.get("https://garagesalefinder.com/s/NUcGv/15326-corliss-pl-n-shoreline-wa-98133")
-  soup = BeautifulSoup(url.text, 'html.parser')
   AddressList = []
   for address in soup.find_all('h1'):
     AddressList.append(address.text)
   address = AddressList[0]
   return address
 
-def getDescription():
-  url = requests.get("https://garagesalefinder.com/s/NUcGv/15326-corliss-pl-n-shoreline-wa-98133")
-  soup = BeautifulSoup(url.text, 'html.parser')
+def getDescription(soup):
   DescriptionList = []
   for description in soup.find_all('p'):
     DescriptionList.append(description.text)
   description = DescriptionList[5]
   return description.strip()
 
-def getDate():
-  url = requests.get("https://garagesalefinder.com/s/NUcGv/15326-corliss-pl-n-shoreline-wa-98133")
-  soup = BeautifulSoup(url.text, 'html.parser')
+def getDate(soup):
   datesList = []
   # might be a problem for implementing everything together, ideally just want to replace the tags in the "times" div section
   for tag in soup.find_all('br'):
