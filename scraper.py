@@ -23,6 +23,7 @@ def getLinks(location='sammamish-wa'):
   for link in outerDict.keys():
     responseListing = requests.get(str(link))
     soupD = BeautifulSoup(responseListing.text, 'html.parser')
+    outerDict[link]['link'] = link
     outerDict[link]['location'] = location
     outerDict[link]['title'] = getTitle(soupD)
     outerDict[link]['description'] = getDescription(soupD)

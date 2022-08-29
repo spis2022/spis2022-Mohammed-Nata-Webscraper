@@ -37,40 +37,57 @@ def render_home():
 #refreshes database with new info from scraper
 @app.route('/load-db')
 def render_load_db():
+  databaseArchive = []
+  newlyScraped = []
+  listingsCursor = db.listings.find()
+  for listing in listingsCursor:
+    databaseArchive.append(listing['link'])  
   links = getLinks()
   for key,value in links.items():
-    # store value in mongoDB database
-    db.listings.insert_one(value)
-    print("storing record for", key)
+    if key not in databaseArchive:
+      print("new entry!!")
+      db.listings.insert_one(value)
+      print("storing record for", key)
+    newlyScraped.append(key)
+  for entry in databaseArchive:
+    if entry not in newlyScraped:
+      db.listings.delete_one({"link":entry})
+      print("db deleted", entry)
   return "db loaded"
 
-# github login stuff
+@github.access_token_getter
+def token_getter():
+    user = g.user
+    if user is not None:
+        print(user.github_access_token)
+
 @app.route('/login')
 def login():
-    return render_template("login.html")
-
-@app.route('/register')
-def new_user():
-    return render_template("register.html")
-    # return github.authorize()
+    return github.authorize()
   
 @app.route('/callback')
 @github.authorized_handler
 def authorized(oauth_token):
     if oauth_token is None:
-        return "Authorization Failed"
-
+      return "Authorization Failed"
     else:
-      return "Authorization Succeeded"
+      return oauth_token
 
 @app.route('/listings')
 def render_listings():
-  # links = getLinks()
-  # return render_template('scraper.html', links = links)
+  listingsCursor = db.listings.find()
+  return render_template('listings.html', cursor = listingsCursor)
   pass
-for listing in  db.listings.find():
-  print(listing)
+@app.route('/collapsingtest')
+def render_collapse():
+  return render_template('collapseTest.html')
+
+listingsCursor = db.listings.find()
+# for listing in listingsCursor:
+#   print(type(listing))
+#   print(len(listing.keys()))
+#   print(listing)
 
 if __name__ == "__main__":
-  pass
- # app.run(host='0.0.0.0')
+  # pass
+  app.run(host='0.0.0.0')

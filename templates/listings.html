@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+{% block title %}Listings{% endblock %}
+{% block content %}
+<!-- Dividing entries into variables -->
+{% for listing in cursor %}
+{% set id = "a" + listing['_id']|string %}
+{% set idhref = "#" + id %}
+{% set title = listing['title'] %}
+{% set description = listing['description'] %}
+{% set address = listing['address'] %}
+{% set dateAndTime = listing['dateAndTime'] %}
+{% set imageList = listing['images'] %}
+<!-- Making buttons with title -->
+<p>
+  <a class="btn btn-primary" data-bs-toggle="collapse" href="{{idhref}}" role="button" aria-expanded="false" aria-controls="{{id}}">
+    {{title}}
+  </a>
+</p>
+
+<div class="collapse" id="{{id}}">
+<!-- Filling contents of button with information -->
+  <div class="card card-body">
+    <p>{{address}}</p>
+    {% for date in dateAndTime %}
+    <p>{{date}}</p>
+    {% endfor %}
+<!-- Description autofills with "Description: if left empty and I don't want that to print so:" -->
+    {% if "Description:" not in description %}
+    <p>{{description}}</p>
+    {% endif %}
+<!-- Image gallery (taken from internet!!) -->
+<div class="container">
+  <hr class="mt-2 mb-5">
+
+  <div class="row text-center text-lg-start">
+    {% for image in imageList %}
+    <div class="col-lg-3 col-md-4 col-6">
+      <a href="#" class="d-block mb-4 h-100">
+        <img class="img-fluid img-thumbnail" src="{{image}}" alt="">
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+  </div>
+</div>
+
+
+{% endfor %}
+{% endblock %}

@@ -1,5 +1,6 @@
 { pkgs }: {
   deps = [
+    pkgs.mongodb-3_4
     pkgs.sudo
     pkgs.python38Full
   ];
