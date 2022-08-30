@@ -1,6 +1,12 @@
 {% extends 'layout.html' %}
 {% block title %}Listings{% endblock %}
 {% block content %}
+<!-- logged in notice -->
+{% if logged_in %}
+<p>You are logged in as {{username}}</p>
+{% else %}
+<p>You are not logged in</p>
+{% endif %}
 <!-- This is to generate unique image ids -->
 {% set alphabet_list = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'] %}
 {% for listing in cursor %}

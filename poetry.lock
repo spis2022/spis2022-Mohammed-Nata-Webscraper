@@ -388,14 +388,6 @@ testing = ["pytest-benchmark", "pytest"]
 dev = ["tox", "pre-commit"]
 
 [[package]]
-name = "psycopg2-binary"
-version = "2.9.3"
-description = "psycopg2 - Python-PostgreSQL Database Adapter"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[[package]]
 name = "pyflakes"
 version = "2.4.0"
 description = "passive checker of Python programs"
@@ -680,7 +672,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "1ab4723a8692d9e5752ff84c319c3c659b0abb7f9da1f6a948ade8198de38f05"
+content-hash = "fd17488c4457eea4898f0d02740f7b3f06547049830cf2c2e45a8737492c0140"
 
 [metadata.files]
 aiohttp = []
@@ -717,7 +709,6 @@ packaging = []
 parso = []
 passlib = []
 pluggy = []
-psycopg2-binary = []
 pyflakes = []
 pymongo = []
 pyparsing = []

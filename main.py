@@ -27,19 +27,20 @@ github = GitHub(app)
 
 app.secret_key = os.environ['APP_SECRET_KEY']
 
-# @app.route('/')
-# def render_home():
-#     return render_template('home.html')
 
-#refreshes database with new info from scraper
+# logs timestamps when a user loads a page, also returns username
 def update_time():
+  logged_in = False
+  username = "this is an error"
   if "username" in session:
     username = session['username']
+    logged_in = True
     filter = {'username': username}
     new_values = { "$set": { 'date': datetime.datetime.now() } }
     db.logins.update_one(filter, new_values)
-    print("time updated")
+  return(logged_in, username)
 
+# refreshes the scraped info in database when loaded
 @app.route('/load-db')
 def render_load_db():
   databaseArchive = []
@@ -60,14 +61,16 @@ def render_load_db():
       print("db deleted", entry)
   return "db loaded"
 
-@app.route('/listings')
+# main page (the listings)
+@app.route('/')
 def render_listings():
-  update_time()
+  (logged_in, username) = update_time()
   listingsCursor = db.listings.find()
-  return render_template('listings.html', cursor = listingsCursor)
-  pass
+  print(logged_in)
+  return render_template('listings.html', cursor = listingsCursor, logged_in = logged_in, username = username)
 
-@app.route("/", methods=['post', 'get'])
+# lets users register if not logged in
+@app.route("/register", methods=['post', 'get'])
 def index():
   message = ''
   date = datetime.datetime.now()
@@ -130,9 +133,9 @@ def login():
             return redirect(url_for("logged_in"))
         message = 'Wrong password'
         return render_template('login.html', message=message)
-  else:
-    message = 'username not found'
-    return render_template('login.html', message=message)
+    else:
+      message = 'username not found'
+      return render_template('login.html', message=message)
   return render_template('login.html', message=message)
 
 @app.route("/logout", methods=["POST", "GET"])
@@ -143,15 +146,6 @@ def logout():
   else:
     return render_template('index.html')
 
-def update_time():
-  if "username" in session:
-    username = session['username']
-    filter = {'username': username}
-    new_values = { "$set": { 'date': datetime.datetime.now() } }
-    db.logins.update_one(filter, new_values)
-    print("time updated")
-  else:
-    print('user not in session')
 if __name__ == "__main__":
   # pass
   app.run(host='0.0.0.0')
