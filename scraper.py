@@ -3,14 +3,9 @@ from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
 import sqlite3
 
-#Data base
-# connection = sqlite3.connect("scraper.db")
-# cursor = connection.cursor()
-
 # Setting up soup for the general area search page
 def getLinks(location='sammamish-wa'):
   # soup for listing page
-  # change eventually
   response = requests.get('https://garagesalefinder.com/yard-sales/' + location + "/")
   soup = BeautifulSoup(response.text,'html.parser')
   # collects links of listings
@@ -64,7 +59,6 @@ def getDescription(soup):
 
 def getDate(soup):
   datesList = []
-  # might be a problem for implementing everything together, ideally just want to replace the tags in the "times" div section
   for tag in soup.find_all('br'):
     tag.replace_with(tag.text + ' ')
   for times in soup.find_all('div', {"class": "date-time"}):
